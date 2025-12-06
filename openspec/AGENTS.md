@@ -412,6 +412,38 @@ Only add complexity with:
 | Read specific files | Read | Direct file access |
 | Explore unknown scope | Task | Multi-step investigation |
 
+## Shell Commands on Windows
+
+This project runs on Windows with a bash-compatible shell (Git Bash or similar). Follow these rules to avoid common errors:
+
+1. **Recognize the environment**: The platform is `win32` but the shell is `/usr/bin/bash`. Assume Git Bash or similar Unix-like shell, NOT `cmd.exe` or PowerShell.
+
+2. **Never use `cd /d`**: The `/d` flag is Windows `cmd.exe` syntax and will cause "too many arguments" errors in bash. Use `cd "path"` instead.
+
+3. **Always quote paths with backslashes**: Wrap Windows-style paths in double quotes to prevent bash from interpreting `\` as escape characters.
+   ```bash
+   # Correct
+   cd "E:\codebase\landing-page" && openspec list
+
+   # Wrong - will error
+   cd /d E:\codebase\landing-page && openspec list
+   ```
+
+4. **Prefer forward slashes when possible**: Bash handles forward slashes more reliably than backslashes.
+   ```bash
+   # More reliable
+   cd "E:/codebase/landing-page" && openspec list
+   ```
+
+## Testing Best Practices
+
+When building components with multiple interactive elements:
+
+1. **Write tests alongside component code** to catch selector conflicts early
+2. **Use specific test selectors** like `data-testid` instead of ambiguous role + name queries
+3. **Avoid nested elements with same role** - having `role="button"` inside another `role="button"` creates ambiguity for tests and assistive technologies
+4. **Add `data-testid` attributes proactively** to interactive elements that need direct testing
+
 ## Error Recovery
 
 ### Change Conflicts

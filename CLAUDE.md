@@ -16,3 +16,12 @@ Use `@/openspec/AGENTS.md` to learn:
 Keep this managed block so 'openspec update' can refresh the instructions.
 
 <!-- OPENSPEC:END -->
+
+## Testing Best Practices
+
+When building components with multiple interactive elements:
+
+1. **Write tests alongside component code** to catch selector conflicts early
+2. **Use specific test selectors** like `data-testid` instead of ambiguous role + name queries
+3. **Avoid nested elements with same role** - nested `role="button"` creates ambiguity for tests and assistive technologies
+4. **Add `data-testid` attributes proactively** to interactive elements that need direct testing
