@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:reactbits.dev)"
+      "WebFetch(domain:reactbits.dev)",
+      "Bash(openspec list:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

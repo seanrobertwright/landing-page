@@ -44,7 +44,8 @@ Skip proposal for:
 1. Review `openspec/project.md`, `openspec list`, and `openspec list --specs` to understand current context.
 2. Choose a unique verb-led `change-id` and scaffold `proposal.md`, `tasks.md`, optional `design.md`, and spec deltas under `openspec/changes/<id>/`.
 3. Draft spec deltas using `## ADDED|MODIFIED|REMOVED Requirements` with at least one `#### Scenario:` per requirement.
-4. Run `openspec validate <id> --strict` and resolve any issues before sharing the proposal.
+4. **Verify format** - Check that all requirements include "SHALL" or "MUST" and scenarios use `#### Scenario:` format.
+5. Run `openspec validate <id> --strict` and resolve any issues before sharing the proposal.
 
 ### Stage 2: Implementing Changes
 Track these steps as TODOs and complete them one by one.
@@ -175,6 +176,33 @@ New request?
 ```
 
 3. **Create spec deltas:** `specs/[capability]/spec.md`
+
+**⚠️ CRITICAL FORMAT RULES (validated by `openspec validate --strict`):**
+- Every requirement description **MUST** include "SHALL" or "MUST" (normative keywords)
+- Every requirement **MUST** have at least one `#### Scenario:` block (exactly 4 hashtags)
+- Scenarios describe behavior, not implementation
+
+**CORRECT FORMAT:**
+```markdown
+## ADDED Requirements
+### Requirement: User Authentication
+The system SHALL validate user credentials before granting access.
+
+#### Scenario: Valid login
+- **WHEN** user provides valid credentials
+- **THEN** access is granted
+```
+
+**INCORRECT FORMAT (will fail validation):**
+```markdown
+## ADDED Requirements
+### Requirement: User Authentication
+Users must log in with credentials.  ❌ Missing SHALL/MUST
+
+- **Scenario: Valid login**  ❌ Wrong format (uses bullet)
+```
+
+**Full Template:**
 ```markdown
 ## ADDED Requirements
 ### Requirement: New Feature
@@ -204,7 +232,24 @@ If multiple capabilities are affected, create multiple delta files under `change
 - [ ] 1.4 Write tests
 ```
 
-5. **Create design.md when needed:**
+5. **Pre-validation checklist (before running `openspec validate`):**
+
+Before validating your proposal, verify these common format requirements:
+
+- [ ] **Requirement descriptions include SHALL/MUST** - Every requirement under `## ADDED/MODIFIED Requirements` must contain "SHALL" or "MUST"
+- [ ] **Scenario format is correct** - Use `#### Scenario: Name` (exactly 4 hashtags, not bullets or bold)
+- [ ] **Every requirement has scenarios** - At least one scenario per requirement
+- [ ] **MODIFIED requirements are complete** - Include full updated content, not just changes
+- [ ] **Delta headers are correct** - Use `## ADDED Requirements`, `## MODIFIED Requirements`, etc.
+
+**Quick self-check command:**
+```bash
+# Manually scan your spec files to verify SHALL/MUST appears
+# in the line immediately after each "### Requirement:" header
+cat openspec/changes/your-change-id/specs/*/spec.md
+```
+
+6. **Create design.md when needed:**
 Create `design.md` if any of the following apply; otherwise omit it:
 - Cross-cutting change (multiple services/modules) or a new architectural pattern
 - New external dependency or significant data model changes
