@@ -53,9 +53,122 @@ Track these steps as TODOs and complete them one by one.
 2. **Read design.md** (if exists) - Review technical decisions
 3. **Read tasks.md** - Get implementation checklist
 4. **Implement tasks sequentially** - Complete in order
-5. **Confirm completion** - Ensure every item in `tasks.md` is finished before updating statuses
-6. **Update checklist** - After all work is done, set every task to `- [x]` so the list reflects reality
-7. **Approval gate** - Do not start implementation until the proposal is reviewed and approved
+5. **Run verification checks** - Before marking anything complete:
+   - [ ] Run full test suite: ALL tests must pass (100%, no exceptions)
+   - [ ] Run production build: Must succeed with zero errors
+   - [ ] Check TypeScript: Must compile with no errors
+   - [ ] Manual verification: Test critical paths in browser/app
+6. **Fix all failures** - If ANY check fails:
+   - Do NOT mark tasks as complete
+   - Investigate root cause of each failure
+   - Fix the issue completely
+   - Re-run ALL verification checks
+   - Repeat until 100% pass rate achieved
+7. **Confirm completion** - Only after all verifications pass:
+   - Ensure every item in `tasks.md` is actually finished
+   - Verify the definition of "complete" below is satisfied
+8. **Update checklist** - ONLY after all quality gates pass:
+   - Set every completed task to `- [x]`
+   - The checklist must reflect reality
+   - Never mark tasks complete if verification failed
+   - If you marked tasks complete prematurely, revert to `- [ ]` and fix issues
+9. **Approval gate** - Do not start implementation until the proposal is reviewed and approved
+
+#### Definition of "Complete"
+
+A task is ONLY complete when ALL of the following are true:
+1. ✅ Code is written and implements the requirement
+2. ✅ All tests pass (100% - no exceptions for "minor" failures)
+3. ✅ Build succeeds with zero errors
+4. ✅ TypeScript compilation passes with no errors
+5. ✅ Linting passes (if project has linting)
+6. ✅ No console errors during manual testing (if applicable)
+
+**CRITICAL**: Never mark a task as complete if ANY test is failing, even if:
+- The test "seems minor"
+- The test "might be timing-related"
+- "Most tests pass"
+- "The build works anyway"
+
+A single failing test indicates incomplete work that must be fixed.
+
+#### Pre-Completion Quality Gate
+
+Before updating `tasks.md` to mark items complete, verify:
+
+**Required Checks (ALL must pass):**
+- [ ] `npm test` or equivalent: **100% tests passing**
+- [ ] `npm run build` or equivalent: **Zero errors**
+- [ ] TypeScript compilation: **Zero errors**
+- [ ] Manual testing: **Core functionality works**
+- [ ] No regressions: **Existing features still work**
+
+**Red Flags (If ANY are true, DO NOT mark complete):**
+- ❌ "Most tests pass" (if not 100%, it's not done)
+- ❌ "Build works but tests fail" (tests must pass)
+- ❌ "Minor timing issues" (investigate and fix)
+- ❌ "Probably not important" (every failure is important)
+- ❌ "Will fix later" (fix now, before marking complete)
+
+**If any check fails:**
+1. Stop and investigate the root cause
+2. Fix the issue completely
+3. Re-run ALL checks
+4. Only proceed when everything passes
+
+#### Examples: Wrong vs. Right Completion
+
+**❌ Bad Example: Premature Completion**
+```
+Agent: "The build passes and most tests work. I'll mark the implementation
+complete. The 4 failing tests seem minor and timing-related."
+
+✗ Only 29/37 tests passing (78%)
+✗ Dismissed failures without investigation
+✗ Marked all tasks complete anyway
+✗ Told user implementation was ready
+```
+
+**Why this is wrong:**
+- 78% is not acceptable (100% is the standard)
+- "Timing-related" is an assumption, not a diagnosis
+- Marking complete before fixing creates false impression
+- User receives broken implementation
+
+**✅ Good Example: Proper Completion**
+```
+Agent: "Build passes but 4 tests are failing. Let me investigate..."
+
+✓ Investigates each failure
+✓ Finds root causes (invalid UUID, missing DialogDescription, etc.)
+✓ Fixes all issues
+✓ Re-runs tests: 37/37 passing (100%)
+✓ Re-runs build: Success
+✓ THEN marks tasks complete
+```
+
+**Why this is right:**
+- Every failure investigated and fixed
+- 100% verification before completion claim
+- User receives fully working implementation
+- Builds trust through reliability
+
+**Common Failure Patterns to Recognize:**
+
+**Pattern: "Most tests pass"**
+- If you think "29/37 is pretty good": STOP
+- 78% is failure, not success
+- Every failing test must be fixed
+
+**Pattern: "Probably just timing"**
+- If you assume cause without investigating: STOP
+- Always investigate actual root cause
+- Fix the real issue, don't dismiss
+
+**Pattern: "Minor failures"**
+- If you think some failures don't matter: STOP
+- All failures matter equally
+- Fix everything before claiming done
 
 ### Stage 3: Archiving Changes
 After deployment, create separate PR to:
@@ -224,13 +337,32 @@ The system SHALL provide...
 If multiple capabilities are affected, create multiple delta files under `changes/[change-id]/specs/<capability>/spec.md`—one per capability.
 
 4. **Create tasks.md:**
+
+Use the template at `openspec/TASKS-TEMPLATE.md` or follow this structure:
+
 ```markdown
 ## 1. Implementation
 - [ ] 1.1 Create database schema
 - [ ] 1.2 Implement API endpoint
 - [ ] 1.3 Add frontend component
-- [ ] 1.4 Write tests
+
+## 2. Testing
+- [ ] 2.1 Write unit tests
+- [ ] 2.2 Write integration tests
+
+## 3. Documentation
+- [ ] 3.1 Add JSDoc comments
+- [ ] 3.2 Update relevant docs
+
+## N. Final Verification (REQUIRED)
+- [ ] N.1 Run full test suite: 100% tests passing
+- [ ] N.2 Run production build: Zero errors
+- [ ] N.3 Run TypeScript compiler: Zero errors
+- [ ] N.4 Manual testing: Core functionality works
+- [ ] N.5 All verification checks pass
 ```
+
+**IMPORTANT**: The final verification section (N) is mandatory. Always include it to ensure proper quality gates before marking tasks complete. See `openspec/TASKS-TEMPLATE.md` for the complete template with detailed verification checklist.
 
 5. **Pre-validation checklist (before running `openspec validate`):**
 

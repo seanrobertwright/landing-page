@@ -62,6 +62,54 @@ A developer-centric link collection organizer - a local bookmarking application 
 - **E2E Tests** (Playwright): Test full user flows (creating folders, adding links, import/export)
 - **Test Location**: Co-locate unit tests with source (`*.test.ts`), e2e tests in `/tests/e2e/`
 
+### Quality Standards
+
+All implementations must meet these standards before marking tasks as complete:
+
+**Required Verification (No Exceptions):**
+- ✅ **Test Coverage**: 100% of tests passing (not 99%, not "most tests")
+  - Run: `npm test`
+  - Required: All tests pass, zero failures
+  - No dismissing "minor" or "timing-related" failures
+
+- ✅ **Build**: Zero errors, zero warnings
+  - Run: `npm run build`
+  - Required: Clean production build
+  - TypeScript must compile without errors
+
+- ✅ **Type Safety**: Strict TypeScript compliance
+  - Strict mode enabled (tsconfig.json)
+  - Zero type errors (`tsc --noEmit`)
+  - Explicit types for function parameters and returns
+
+- ✅ **Manual Testing**: Core functionality verified
+  - Critical user paths tested in browser
+  - No console errors during normal operation
+  - UI renders correctly, interactions work
+
+- ✅ **No Regressions**: Existing features continue to work
+  - Previously working features still function
+  - No breaking changes to existing APIs
+  - Database migrations backward compatible (when applicable)
+
+**Completion Definition:**
+A task is complete ONLY when:
+1. Code is written and implements the requirement
+2. ALL tests pass (100%, no exceptions)
+3. Build succeeds with zero errors
+4. TypeScript compilation passes with no errors
+5. Manual testing confirms functionality works
+6. No regressions in existing features
+
+**Red Flags - Never Accept These:**
+- ❌ "Most tests pass" → All tests must pass
+- ❌ "Build works but tests fail" → Tests must pass
+- ❌ "Minor timing issues" → Investigate and fix
+- ❌ "Probably not important" → Every failure matters
+- ❌ "Will fix later" → Fix now, before claiming complete
+
+Partial completion is not completion. If verification fails, the work is not done.
+
 ### Git Workflow
 - **Branching**: Feature branches off `main`
   - Format: `feature/description`, `fix/description`, `chore/description`

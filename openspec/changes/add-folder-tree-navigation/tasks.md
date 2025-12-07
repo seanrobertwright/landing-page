@@ -9,7 +9,7 @@
 - [x] 2.1 Create `lib/db/folders.ts` - folder CRUD functions
 - [x] 2.2 Create `lib/db/links.ts` - link CRUD functions
 - [x] 2.3 Create `lib/db/tree.ts` - build nested tree structure from flat data
-- [ ] 2.4 Add unit tests for database operations
+- [x] 2.4 Add unit tests for database operations
 
 ## 3. API Routes
 - [x] 3.1 Create `app/api/folders/route.ts` - GET (list), POST (create)
@@ -17,7 +17,7 @@
 - [x] 3.3 Create `app/api/links/route.ts` - GET (list), POST (create)
 - [x] 3.4 Create `app/api/links/[id]/route.ts` - GET, PATCH, DELETE
 - [x] 3.5 Create `app/api/tree/route.ts` - GET full tree structure
-- [ ] 3.6 Add integration tests for API routes
+- [x] 3.6 Add integration tests for API routes
 
 ## 4. Zod Validation Schemas
 - [x] 4.1 Create `lib/validations/folder.ts` - folder create/update schemas
@@ -25,7 +25,7 @@
 
 ## 5. State Management
 - [x] 5.1 Create `store/folderStore.ts` - tree state, selection, expand/collapse
-- [ ] 5.2 Add unit tests for folderStore
+- [x] 5.2 Add unit tests for folderStore
 
 ## 6. Tree Components
 - [x] 6.1 Create `components/tree/TreeNode.tsx` - recursive node component
@@ -39,10 +39,10 @@
 - [x] 7.3 Remove hardcoded sample links
 
 ## 8. Testing
-- [ ] 8.1 Add component tests for TreeNode expand/collapse
-- [ ] 8.2 Add component tests for folder selection
-- [ ] 8.3 Add E2E tests for tree navigation flow
-- [ ] 8.4 Add E2E tests for link display in content area
+- [x] 8.1 Add component tests for TreeNode expand/collapse
+- [x] 8.2 Add component tests for folder selection
+- [x] 8.3 Add E2E tests for tree navigation flow
+- [x] 8.4 Add E2E tests for link display in content area
 
 ## 9. Verification
 - [x] 9.1 Verify tree renders with nested folders
