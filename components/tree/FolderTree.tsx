@@ -3,9 +3,14 @@
 import { useEffect } from 'react';
 import { useFolderStore } from '@/store/folderStore';
 import { TreeNode } from './TreeNode';
-import { Loader2 } from 'lucide-react';
+import { Loader2, FolderPlus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-export function FolderTree() {
+interface FolderTreeProps {
+  onNewFolderClick: () => void;
+}
+
+export function FolderTree({ onNewFolderClick }: FolderTreeProps) {
   const { tree, isLoading, error, fetchTree } = useFolderStore();
 
   useEffect(() => {
@@ -37,10 +42,28 @@ export function FolderTree() {
   }
 
   return (
-    <div className="py-2" data-testid="folder-tree">
-      {tree.map((node) => (
-        <TreeNode key={node.id} node={node} />
-      ))}
+    <div className="flex flex-col h-full">
+      {/* Header with New Folder button */}
+      <div className="flex items-center justify-between px-2 pb-3 border-b border-border">
+        <h2 className="text-sm font-semibold text-foreground">Folders</h2>
+        <Button
+          onClick={onNewFolderClick}
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 p-0"
+          data-testid="new-folder-button"
+          title="New Folder"
+        >
+          <FolderPlus className="h-4 w-4" />
+        </Button>
+      </div>
+
+      {/* Tree content */}
+      <div className="flex-1 overflow-y-auto py-2" data-testid="folder-tree">
+        {tree.map((node) => (
+          <TreeNode key={node.id} node={node} />
+        ))}
+      </div>
     </div>
   );
 }

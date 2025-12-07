@@ -3,7 +3,11 @@
     "allow": [
       "WebFetch(domain:reactbits.dev)",
       "Bash(openspec list:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest add dialog:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "ask": []

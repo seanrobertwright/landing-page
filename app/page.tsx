@@ -1,41 +1,62 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Sidebar, ContentArea } from "@/components/layout";
 import { LinkCard } from "@/components/links";
 import { FolderTree } from "@/components/tree/FolderTree";
+import { CreateFolderDialog } from "@/components/dialogs/CreateFolderDialog";
+import { CreateLinkDialog } from "@/components/dialogs/CreateLinkDialog";
 import { useFolderStore } from "@/store/folderStore";
 import { Link } from "@/lib/db/links";
+import { TreeNode } from "@/lib/db/tree";
 
 export default function Home() {
-  const selectedFolderId = useFolderStore((state) => state.selectedFolderId);
+  const { selectedFolderId, tree } = useFolderStore();
   const [links, setLinks] = useState<Link[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false);
+  const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
 
-  useEffect(() => {
+  const selectedFolder = useMemo(() => {
+    const findFolder = (nodes: TreeNode[]): TreeNode | null => {
+      for (const node of nodes) {
+        if (node.type === 'folder' && node.id === selectedFolderId) {
+          return node;
+        }
+        if (node.children) {
+          const found = findFolder(node.children);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    return selectedFolderId ? findFolder(tree) : null;
+  }, [tree, selectedFolderId]);
+
+  const fetchLinks = useCallback(async () => {
     if (!selectedFolderId) {
       setLinks([]);
       return;
     }
 
-    const fetchLinks = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch('/api/links');
-        if (response.ok) {
-          const allLinks: Link[] = await response.json();
-          const filteredLinks = allLinks.filter(link => link.folder_id === selectedFolderId);
-          setLinks(filteredLinks);
-        }
-      } catch (error) {
-        console.error('Failed to fetch links:', error);
-      } finally {
-        setIsLoading(false);
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/links');
+      if (response.ok) {
+        const allLinks: Link[] = await response.json();
+        const filteredLinks = allLinks.filter(link => link.folder_id === selectedFolderId);
+        setLinks(filteredLinks);
       }
-    };
-
-    fetchLinks();
+    } catch (error) {
+      console.error('Failed to fetch links:', error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [selectedFolderId]);
+
+  useEffect(() => {
+    fetchLinks();
+  }, [fetchLinks]);
 
   const handleTitleChange = useCallback(async (id: string, newTitle: string) => {
     try {
@@ -58,14 +79,13 @@ export default function Home() {
   return (
     <>
       <Sidebar>
-        <div className="space-y-1">
-          <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
-            Folders
-          </h2>
-          <FolderTree />
-        </div>
+        <FolderTree onNewFolderClick={() => setIsFolderDialogOpen(true)} />
       </Sidebar>
-      <ContentArea>
+      <ContentArea
+        folderName={selectedFolder?.name}
+        onNewLinkClick={() => setIsLinkDialogOpen(true)}
+        showNewLinkButton={!!selectedFolderId}
+      >
         {isLoading ? (
           <div className="flex items-center justify-center p-8 text-slate-400">
             Loading links...
@@ -86,6 +106,21 @@ export default function Home() {
           ))
         )}
       </ContentArea>
+
+      <CreateFolderDialog
+        open={isFolderDialogOpen}
+        onOpenChange={setIsFolderDialogOpen}
+      />
+
+      {selectedFolder && (
+        <CreateLinkDialog
+          open={isLinkDialogOpen}
+          onOpenChange={setIsLinkDialogOpen}
+          folderId={selectedFolder.id}
+          folderName={selectedFolder.name}
+          onLinkCreated={fetchLinks}
+        />
+      )}
     </>
   );
 }

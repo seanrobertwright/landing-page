@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { TreeNode } from '@/lib/db/tree';
+import { getFaviconUrl } from '@/lib/utils/getFaviconUrl';
 
 interface FolderState {
   tree: TreeNode[];
@@ -12,6 +13,8 @@ interface FolderState {
   toggleFolder: (id: string) => void;
   selectFolder: (id: string | null) => void;
   fetchTree: () => Promise<void>;
+  createFolder: (name: string, parentId?: string) => Promise<void>;
+  createLink: (title: string, url: string, folderId: string) => Promise<void>;
 }
 
 export const useFolderStore = create<FolderState>((set, get) => ({
@@ -54,6 +57,42 @@ export const useFolderStore = create<FolderState>((set, get) => ({
       }
     } catch (error) {
       set({ error: error instanceof Error ? error.message : 'Unknown error', isLoading: false });
+    }
+  },
+
+  createFolder: async (name: string, parentId?: string) => {
+    const response = await fetch('/api/folders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, parent_id: parentId || null }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create folder');
+    }
+
+    await get().fetchTree();
+  },
+
+  createLink: async (title: string, url: string, folderId: string) => {
+    const faviconUrl = getFaviconUrl(url);
+    const response = await fetch('/api/links', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title,
+        url,
+        folder_id: folderId,
+        favicon_url: faviconUrl || undefined
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create link');
     }
   },
 }));

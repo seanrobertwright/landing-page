@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Link2 } from "lucide-react";
+import { getFaviconUrl } from "@/lib/utils/getFaviconUrl";
 
 interface LinkCardProps {
   id: string;
@@ -9,15 +10,6 @@ interface LinkCardProps {
   url: string;
   onTitleChange?: (id: string, newTitle: string) => void;
 }
-
-const getFaviconUrl = (url: string): string => {
-  try {
-    const urlObj = new URL(url);
-    return `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=64`;
-  } catch {
-    return "";
-  }
-};
 
 export const LinkCard = ({ id, title, url, onTitleChange }: LinkCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
