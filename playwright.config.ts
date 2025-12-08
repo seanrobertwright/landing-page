@@ -7,8 +7,9 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
+  globalSetup: "./tests/setup/global-setup.ts",
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: process.env.BASE_URL || "http://localhost:5050",
     trace: "on-first-retry",
   },
   projects: [
@@ -19,7 +20,11 @@ export default defineConfig({
   ],
   webServer: {
     command: "npm run dev",
-    url: "http://localhost:3000",
+    url: process.env.BASE_URL || "http://localhost:5050",
     reuseExistingServer: !process.env.CI,
+    env: {
+      NODE_ENV: "test",
+      TEST_DB_PATH: "data/links.test.db",
+    },
   },
 });

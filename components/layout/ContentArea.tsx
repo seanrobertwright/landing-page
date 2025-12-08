@@ -2,10 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Link2 } from "lucide-react";
+import { ContentAreaContextMenu } from "@/components/context-menus/ContentAreaContextMenu";
 
 interface ContentAreaProps {
   children?: React.ReactNode;
   folderName?: string;
+  folderId?: string | null;
   onNewLinkClick?: () => void;
   showNewLinkButton?: boolean;
 }
@@ -13,6 +15,7 @@ interface ContentAreaProps {
 export const ContentArea = ({
   children,
   folderName,
+  folderId,
   onNewLinkClick,
   showNewLinkButton = false,
 }: ContentAreaProps) => {
@@ -40,11 +43,16 @@ export const ContentArea = ({
       )}
 
       {/* Content grid */}
-      <div className="flex-1 overflow-auto p-6">
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
-          {children}
+      <ContentAreaContextMenu
+        folderId={folderId || null}
+        onCreateLink={() => onNewLinkClick?.()}
+      >
+        <div className="flex-1 overflow-auto p-6">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+            {children}
+          </div>
         </div>
-      </div>
+      </ContentAreaContextMenu>
     </main>
   );
 };

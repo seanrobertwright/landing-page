@@ -5,6 +5,7 @@ import {
   createFolder,
   updateFolder,
   deleteFolder,
+  reorderFolders,
   type Folder,
 } from './folders';
 import { closeDb, getDb } from './index';
@@ -165,6 +166,56 @@ describe('folders database operations', () => {
 
     it('should not throw when deleting non-existent folder', () => {
       expect(() => deleteFolder('non-existent')).not.toThrow();
+    });
+  });
+
+  describe('reorderFolders', () => {
+    it('should update sort_order for single folder', () => {
+      const folder = createFolder({ name: 'Test' });
+
+      reorderFolders([
+        { id: folder.id, parent_id: null, sort_order: 100 }
+      ]);
+
+      const updated = getFolderById(folder.id);
+      expect(updated?.sort_order).toBe(100);
+    });
+
+    it('should update sort_order for multiple folders', () => {
+      const folder1 = createFolder({ name: 'Folder 1' });
+      const folder2 = createFolder({ name: 'Folder 2' });
+      const folder3 = createFolder({ name: 'Folder 3' });
+
+      reorderFolders([
+        { id: folder1.id, parent_id: null, sort_order: 300 },
+        { id: folder2.id, parent_id: null, sort_order: 100 },
+        { id: folder3.id, parent_id: null, sort_order: 200 },
+      ]);
+
+      const updated1 = getFolderById(folder1.id);
+      const updated2 = getFolderById(folder2.id);
+      const updated3 = getFolderById(folder3.id);
+
+      expect(updated1?.sort_order).toBe(300);
+      expect(updated2?.sort_order).toBe(100);
+      expect(updated3?.sort_order).toBe(200);
+    });
+
+    it('should update parent_id and sort_order together', () => {
+      const parent = createFolder({ name: 'Parent' });
+      const folder = createFolder({ name: 'Child' });
+
+      reorderFolders([
+        { id: folder.id, parent_id: parent.id, sort_order: 100 }
+      ]);
+
+      const updated = getFolderById(folder.id);
+      expect(updated?.parent_id).toBe(parent.id);
+      expect(updated?.sort_order).toBe(100);
+    });
+
+    it('should handle empty array', () => {
+      expect(() => reorderFolders([])).not.toThrow();
     });
   });
 });

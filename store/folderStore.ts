@@ -15,6 +15,8 @@ interface FolderState {
   fetchTree: () => Promise<void>;
   createFolder: (name: string, parentId?: string) => Promise<void>;
   createLink: (title: string, url: string, folderId: string) => Promise<void>;
+  reorderFolders: (items: { id: string; parent_id: string | null; sort_order: number }[]) => Promise<void>;
+  reorderLinks: (items: { id: string; folder_id: string; sort_order: number }[]) => Promise<void>;
 }
 
 export const useFolderStore = create<FolderState>((set, get) => ({
@@ -93,6 +95,52 @@ export const useFolderStore = create<FolderState>((set, get) => ({
 
     if (!response.ok) {
       throw new Error('Failed to create link');
+    }
+  },
+
+  reorderFolders: async (items) => {
+    const previousTree = get().tree;
+
+    try {
+      const response = await fetch('/api/folders/reorder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reorder folders');
+      }
+
+      await get().fetchTree();
+    } catch (error) {
+      set({ tree: previousTree });
+      throw error;
+    }
+  },
+
+  reorderLinks: async (items) => {
+    const previousTree = get().tree;
+
+    try {
+      const response = await fetch('/api/links/reorder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reorder links');
+      }
+
+      await get().fetchTree();
+    } catch (error) {
+      set({ tree: previousTree });
+      throw error;
     }
   },
 }));

@@ -26,11 +26,13 @@ import { createFolderSchema } from "@/lib/validations/folder";
 interface CreateFolderDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  parentFolderId?: string | null;
 }
 
 export const CreateFolderDialog = ({
   open,
   onOpenChange,
+  parentFolderId,
 }: CreateFolderDialogProps) => {
   const [name, setName] = useState("");
   const [parentId, setParentId] = useState<string>("ROOT");
@@ -39,6 +41,11 @@ export const CreateFolderDialog = ({
 
   const { tree, createFolder } = useFolderStore();
   const folderOptions = buildFolderOptions(tree);
+
+  // Update parent ID when parentFolderId prop changes and dialog opens
+  if (open && parentFolderId !== undefined && parentId !== (parentFolderId || "ROOT")) {
+    setParentId(parentFolderId || "ROOT");
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -9,6 +9,7 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     include: ["**/*.test.{ts,tsx}"],
     globals: true,
+    fileParallelism: false, // Run test files sequentially to avoid database conflicts
   },
   resolve: {
     alias: {

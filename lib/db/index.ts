@@ -6,7 +6,12 @@ let db: Database.Database | null = null;
 
 export function getDb(): Database.Database {
   if (!db) {
-    const dbPath = path.join(process.cwd(), 'data', 'links.db');
+    // Use TEST_DB_PATH environment variable during testing, otherwise use default
+    const dbFilename = process.env.NODE_ENV === 'test' || process.env.TEST_DB_PATH
+      ? 'links.test.db'
+      : 'links.db';
+    const dbPath = path.join(process.cwd(), 'data', dbFilename);
+
     db = new Database(dbPath);
     db.pragma('journal_mode = WAL');
     db.pragma('foreign_keys = ON');

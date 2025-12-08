@@ -15,5 +15,16 @@ export const updateLinkSchema = z.object({
   sort_order: z.number().int().min(0).optional(),
 });
 
+export const reorderLinksSchema = z.object({
+  items: z.array(
+    z.object({
+      id: z.string().uuid(),
+      folder_id: z.string().uuid(),
+      sort_order: z.number().int().min(0),
+    })
+  ).min(1),
+});
+
 export type CreateLinkInput = z.infer<typeof createLinkSchema>;
 export type UpdateLinkInput = z.infer<typeof updateLinkSchema>;
+export type ReorderLinksInput = z.infer<typeof reorderLinksSchema>;

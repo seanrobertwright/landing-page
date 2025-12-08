@@ -21,20 +21,48 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 When creating spec deltas in `openspec/changes/*/specs/*/spec.md`, follow these **mandatory** format rules to pass validation:
 
-### Requirement Descriptions MUST Include SHALL/MUST
+### ⚠️ MOST COMMON ERROR: Missing Description Text
 
-Every requirement description **MUST** contain the normative keywords "SHALL" or "MUST":
+Every requirement **MUST** have descriptive text between the heading and the first scenario:
 
 **✅ CORRECT:**
 ```markdown
 ### Requirement: User Authentication
 The system SHALL validate user credentials before granting access.
+↑↑↑ This description text is REQUIRED ↑↑↑
+
+#### Scenario: Valid login
+- **WHEN** user provides credentials
+- **THEN** access is granted
 ```
 
 **❌ WRONG (fails validation):**
 ```markdown
 ### Requirement: User Authentication
-Users must log in with credentials.  ❌ Missing SHALL/MUST
+
+#### Scenario: Valid login  ❌ ERROR: No text between heading and scenario!
+- **WHEN** user provides credentials
+```
+
+**The Fix:** Always add at least one sentence after the requirement heading, before any scenarios.
+
+---
+
+### Requirement Descriptions MUST Include SHALL/MUST
+
+Every requirement description **MUST** contain the normative keywords "SHALL" or "MUST" (uppercase):
+
+**✅ CORRECT:**
+```markdown
+### Requirement: User Authentication
+The system SHALL validate user credentials before granting access.
+↑ Includes "SHALL"
+```
+
+**❌ WRONG (fails validation):**
+```markdown
+### Requirement: User Authentication
+Users must log in with credentials.  ❌ "must" is lowercase - needs "SHALL" or "MUST"
 ```
 
 ### Scenarios MUST Use Exactly 4 Hashtags
@@ -62,12 +90,15 @@ Each requirement must include at least one scenario block demonstrating the beha
 ### Before Running openspec validate
 
 Use this pre-validation checklist:
-- [ ] All requirement descriptions include "SHALL" or "MUST"
+- [ ] **Every requirement has description text** between heading and first scenario
+- [ ] All requirement descriptions include "SHALL" or "MUST" (uppercase)
 - [ ] All scenarios use `#### Scenario:` format (exactly 4 hashtags)
 - [ ] Every requirement has at least one scenario
 - [ ] MODIFIED requirements include complete updated content (not partial deltas)
 
 **Quick reference:** See `openspec/QUICK-REFERENCE.md` for detailed templates and examples.
+
+**Template:** Copy from `openspec/SPEC-TEMPLATE.md` when creating new specs.
 
 **Always validate with:** `openspec validate <change-id> --strict`
 

@@ -6,6 +6,7 @@ import {
   createLink,
   updateLink,
   deleteLink,
+  reorderLinks,
   type Link,
 } from './links';
 import { createFolder, deleteFolder } from './folders';
@@ -237,6 +238,56 @@ describe('links database operations', () => {
 
       const found = getLinkById(link.id);
       expect(found).toBeUndefined();
+    });
+  });
+
+  describe('reorderLinks', () => {
+    it('should update sort_order for single link', () => {
+      const link = createLink({ title: 'Test', url: 'https://test.com', folder_id: testFolderId });
+
+      reorderLinks([
+        { id: link.id, folder_id: testFolderId, sort_order: 100 }
+      ]);
+
+      const updated = getLinkById(link.id);
+      expect(updated?.sort_order).toBe(100);
+    });
+
+    it('should update sort_order for multiple links', () => {
+      const link1 = createLink({ title: 'Link 1', url: 'https://test1.com', folder_id: testFolderId });
+      const link2 = createLink({ title: 'Link 2', url: 'https://test2.com', folder_id: testFolderId });
+      const link3 = createLink({ title: 'Link 3', url: 'https://test3.com', folder_id: testFolderId });
+
+      reorderLinks([
+        { id: link1.id, folder_id: testFolderId, sort_order: 300 },
+        { id: link2.id, folder_id: testFolderId, sort_order: 100 },
+        { id: link3.id, folder_id: testFolderId, sort_order: 200 },
+      ]);
+
+      const updated1 = getLinkById(link1.id);
+      const updated2 = getLinkById(link2.id);
+      const updated3 = getLinkById(link3.id);
+
+      expect(updated1?.sort_order).toBe(300);
+      expect(updated2?.sort_order).toBe(100);
+      expect(updated3?.sort_order).toBe(200);
+    });
+
+    it('should move link to different folder', () => {
+      const folder2 = createFolder({ name: 'Folder 2' });
+      const link = createLink({ title: 'Test', url: 'https://test.com', folder_id: testFolderId });
+
+      reorderLinks([
+        { id: link.id, folder_id: folder2.id, sort_order: 100 }
+      ]);
+
+      const updated = getLinkById(link.id);
+      expect(updated?.folder_id).toBe(folder2.id);
+      expect(updated?.sort_order).toBe(100);
+    });
+
+    it('should handle empty array', () => {
+      expect(() => reorderLinks([])).not.toThrow();
     });
   });
 });

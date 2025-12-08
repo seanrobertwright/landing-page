@@ -22,18 +22,45 @@
 
 ## ⚠️ Critical Format Rules
 
+### Every Requirement MUST Have Description Text
+
+**✅ CORRECT:**
+```markdown
+### Requirement: User Authentication
+The system SHALL validate user credentials before granting access.
+↑ Required descriptive text between heading and scenario
+
+#### Scenario: Valid login
+- **WHEN** user provides credentials
+- **THEN** access is granted
+```
+
+**❌ WRONG (will fail validation):**
+```markdown
+### Requirement: User Authentication
+
+#### Scenario: Valid login  ❌ ERROR: Missing description text!
+- **WHEN** user provides credentials
+- **THEN** access is granted
+```
+
+**The Fix:** Always add at least one sentence describing the requirement after the heading, before any scenarios.
+
+---
+
 ### Requirement Descriptions MUST Include SHALL/MUST
 
 **✅ CORRECT:**
 ```markdown
 ### Requirement: User Authentication
 The system SHALL validate user credentials before granting access.
+↑ Includes "SHALL"
 ```
 
 **❌ WRONG (will fail validation):**
 ```markdown
 ### Requirement: User Authentication
-Users must log in with credentials.  ❌ Missing SHALL/MUST
+Users must log in with credentials.  ❌ Missing SHALL (lowercase "must" doesn't count)
 ```
 
 ### Scenarios MUST Use Exactly 4 Hashtags
@@ -101,8 +128,9 @@ The system SHALL/MUST provide [capability].
 
 **Run this BEFORE `openspec validate --strict`:**
 
-- [ ] **Requirement descriptions have SHALL/MUST** - Every `### Requirement:` followed by line with "SHALL" or "MUST"
-- [ ] **Scenario format correct** - Use `#### Scenario: Name` (exactly 4 hashtags)
+- [ ] **Requirement has description text** - Every `### Requirement:` heading MUST be followed by descriptive text before first scenario
+- [ ] **Requirement descriptions have SHALL/MUST** - Every description line includes "SHALL" or "MUST" (uppercase)
+- [ ] **Scenario format correct** - Use `#### Scenario: Name` (exactly 4 hashtags, not 3, not bullets)
 - [ ] **Every requirement has ≥1 scenario** - At least one scenario block per requirement
 - [ ] **MODIFIED requirements are complete** - Full updated content, not partial deltas
 - [ ] **Delta headers correct** - Use `## ADDED Requirements`, `## MODIFIED Requirements`, etc.
@@ -161,9 +189,23 @@ Create `design.md` if **ANY** of these apply:
 
 ## 🔍 Common Validation Errors
 
+### Error: "ADDED requirement is missing requirement text"
+**Cause:** No descriptive text between requirement heading and first scenario
+**Fix:** Add at least one sentence describing the requirement:
+```markdown
+### Requirement: The system SHALL do X
+Add this text here describing what it does!  ← Fix: Add description
+
+#### Scenario: First scenario
+```
+
 ### Error: "ADDED requirement must contain SHALL or MUST"
-**Cause:** Requirement description missing normative keyword
+**Cause:** Requirement description missing normative keyword (uppercase)
 **Fix:** Add "The system SHALL..." or "Users MUST..." to requirement description
+```markdown
+### Requirement: Authentication
+The system SHALL validate credentials.  ← Fix: Add "SHALL"
+```
 
 ### Error: "Requirement must have at least one scenario"
 **Cause:** No `#### Scenario:` block under requirement
@@ -172,6 +214,11 @@ Create `design.md` if **ANY** of these apply:
 ### Error: "Invalid scenario header"
 **Cause:** Scenario not using exactly 4 hashtags
 **Fix:** Use `#### Scenario: Name` (not bullets, bold, or 3 hashtags)
+```markdown
+❌ - **Scenario: Test**   (bullet)
+❌ ### Scenario: Test      (3 hashtags)
+✅ #### Scenario: Test     (4 hashtags)
+```
 
 ### Error: "Change must have at least one delta"
 **Cause:** No spec.md files in `specs/` directory

@@ -25,6 +25,29 @@ A developer-centric link collection organizer - a local bookmarking application 
 - **Testing**: Vitest (unit/integration), Playwright (e2e)
 - **Containerization**: Docker (standard Node image)
 
+## Configuration
+
+### Environment Variables
+Copy `.env.example` to `.env.local` and customize as needed:
+
+- **PORT**: Server port (default: 5050)
+- **DB_PATH**: Database file path (default: data/links.db)
+- **NODE_ENV**: Environment (development, production, test)
+- **TEST_DB_PATH**: Test database path (default: data/links.test.db)
+
+### Running the Application
+
+**Development**: `npm run dev` (runs on port 5050)
+**Production Build**: `npm run build`
+**Production Server**: `npm start` (runs on port 5050)
+
+### Running Tests
+
+**Unit Tests**: `npm test` (or `npm run test:run` for CI)
+**E2E Tests**: `npm run test:e2e` (automatically seeds test database)
+
+**Note**: E2E tests use a separate test database (`data/links.test.db`) that is automatically created and seeded before tests run. The test database is isolated from your development database.
+
 ## Project Conventions
 
 ### Code Style

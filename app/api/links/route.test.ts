@@ -8,15 +8,17 @@ describe('Links API Routes', () => {
   beforeEach(async () => {
     const db = getDb();
     await new Promise(resolve => setTimeout(resolve, 10)); // Small delay to avoid race conditions
+
+    // Delete in correct order: links first, then folders
     db.prepare('DELETE FROM links').run();
     db.prepare('DELETE FROM folders').run();
 
-    // Create a test folder
+    // Create a test folder after cleanup
     testFolderId = crypto.randomUUID();
     const now = new Date().toISOString();
     db.prepare(
-      'INSERT INTO folders (id, name, parent_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?)'
-    ).run(testFolderId, 'Test Folder', null, now, now);
+      'INSERT INTO folders (id, name, parent_id, created_at, updated_at, sort_order) VALUES (?, ?, ?, ?, ?, ?)'
+    ).run(testFolderId, 'Test Folder', null, now, now, 0);
   });
 
   afterAll(() => {

@@ -1,0 +1,61 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - heading "LRIL Landing Page" [level=1] [ref=e5]
+        - img "LRIL Logo" [ref=e6]
+    - generic [ref=e7]:
+      - complementary [ref=e8]:
+        - generic [ref=e9]:
+          - generic [ref=e10]:
+            - generic [ref=e11]:
+              - heading "Folders" [level=2] [ref=e12]
+              - button "New Folder" [ref=e13]:
+                - img
+            - generic [ref=e14]:
+              - generic [ref=e15]:
+                - button "Design Resources" [ref=e16] [cursor=pointer]:
+                  - img [ref=e17]
+                  - img [ref=e19]
+                  - generic [ref=e21]: Design Resources
+                - generic [ref=e22]:
+                  - button "Dribbble" [ref=e24] [cursor=pointer]:
+                    - img [ref=e25]
+                    - generic [ref=e28]: Dribbble
+                  - button "Figma" [ref=e30] [cursor=pointer]:
+                    - img [ref=e31]
+                    - generic [ref=e34]: Figma
+              - button "Test Folder" [ref=e36] [cursor=pointer]:
+                - img [ref=e37]
+                - img [ref=e39]
+                - generic [ref=e41]: Test Folder
+              - button "Web Development" [ref=e43] [cursor=pointer]:
+                - img [ref=e44]
+                - img [ref=e46]
+                - generic [ref=e48]: Web Development
+          - status [ref=e49]
+        - separator "Resize sidebar" [ref=e50]
+      - main [ref=e51]:
+        - generic [ref=e52]:
+          - heading "Design Resources" [level=1] [ref=e53]
+          - button "New Link" [ref=e54]:
+            - img
+            - text: New Link
+        - generic [ref=e56]:
+          - button "Dribbble dribbble.com" [ref=e57]:
+            - button "Dribbble dribbble.com" [ref=e58] [cursor=pointer]:
+              - button "Dribbble" [ref=e61]
+              - paragraph [ref=e62]: dribbble.com
+          - button "Figma figma.com" [ref=e64]:
+            - button "Figma figma.com" [ref=e65] [cursor=pointer]:
+              - button "Figma" [ref=e68]
+              - paragraph [ref=e69]: figma.com
+      - status [ref=e71]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e77] [cursor=pointer]:
+    - img [ref=e78]
+  - alert [ref=e81]
+```

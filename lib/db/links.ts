@@ -97,3 +97,26 @@ export function deleteLink(id: string): void {
   const db = getDb();
   db.prepare('DELETE FROM links WHERE id = ?').run(id);
 }
+
+export interface ReorderLinkItem {
+  id: string;
+  folder_id: string;
+  sort_order: number;
+}
+
+export function reorderLinks(items: ReorderLinkItem[]): void {
+  const db = getDb();
+  const now = new Date().toISOString();
+
+  const stmt = db.prepare(
+    'UPDATE links SET folder_id = ?, sort_order = ?, updated_at = ? WHERE id = ?'
+  );
+
+  const transaction = db.transaction((links: ReorderLinkItem[]) => {
+    for (const link of links) {
+      stmt.run(link.folder_id, link.sort_order, now, link.id);
+    }
+  });
+
+  transaction(items);
+}

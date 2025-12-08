@@ -69,3 +69,26 @@ export function deleteFolder(id: string): void {
   const db = getDb();
   db.prepare('DELETE FROM folders WHERE id = ?').run(id);
 }
+
+export interface ReorderFolderItem {
+  id: string;
+  parent_id: string | null;
+  sort_order: number;
+}
+
+export function reorderFolders(items: ReorderFolderItem[]): void {
+  const db = getDb();
+  const now = new Date().toISOString();
+
+  const stmt = db.prepare(
+    'UPDATE folders SET parent_id = ?, sort_order = ?, updated_at = ? WHERE id = ?'
+  );
+
+  const transaction = db.transaction((folders: ReorderFolderItem[]) => {
+    for (const folder of folders) {
+      stmt.run(folder.parent_id, folder.sort_order, now, folder.id);
+    }
+  });
+
+  transaction(items);
+}
