@@ -104,6 +104,47 @@ Use this pre-validation checklist:
 
 ---
 
+## ⚠️ CRITICAL: OpenSpec Command Reference
+
+**THERE IS NO `openspec proposal` COMMAND!**
+
+### ❌ WRONG (Will Always Fail):
+```bash
+openspec proposal <change-id>  # ❌ ERROR: unknown command 'proposal'
+```
+
+### ✅ CORRECT Workflow for Creating Proposals:
+
+**Step 1: Manually create directory structure:**
+```bash
+mkdir -p "openspec/changes/<change-id>/specs/<capability-name>"
+```
+
+**Step 2: Manually create files using Write tool:**
+- `openspec/changes/<change-id>/proposal.md`
+- `openspec/changes/<change-id>/tasks.md`
+- `openspec/changes/<change-id>/design.md` (optional)
+- `openspec/changes/<change-id>/specs/<capability>/spec.md`
+
+**Step 3: Validate the proposal:**
+```bash
+openspec validate <change-id> --strict
+```
+
+### Available OpenSpec Commands:
+```bash
+openspec list                    # List changes
+openspec list --specs            # List specs
+openspec validate <id> --strict  # Validate a change
+openspec show <id>               # Show change details
+openspec archive <id>            # Archive completed change
+openspec change show <id>        # Alternative show command
+```
+
+**Remember**: The workflow is **manual file creation** → **validate** → **apply**, NOT a command-based scaffold.
+
+---
+
 ## Testing Best Practices
 
 When building components with multiple interactive elements:
