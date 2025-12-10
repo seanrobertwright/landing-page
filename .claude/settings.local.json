@@ -10,7 +10,9 @@
       "Bash(npm test:*)",
       "Bash(openspec proposal add-drag-drop-reordering:*)",
       "Bash(openspec validate:*)",
-      "Bash(openspec proposal add-bookmark-import-export:*)"
+      "Bash(openspec proposal add-bookmark-import-export:*)",
+      "Bash(mkdir:*)",
+      "Bash(openspec show:*)"
     ],
     "deny": [],
     "ask": []

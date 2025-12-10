@@ -13,6 +13,7 @@ export function initSchema(db: Database.Database) {
     );
 
     CREATE INDEX IF NOT EXISTS idx_folders_parent ON folders(parent_id);
+    CREATE INDEX IF NOT EXISTS idx_folders_name ON folders(name);
 
     CREATE TABLE IF NOT EXISTS links (
       id TEXT PRIMARY KEY,
@@ -27,6 +28,8 @@ export function initSchema(db: Database.Database) {
     );
 
     CREATE INDEX IF NOT EXISTS idx_links_folder ON links(folder_id);
+    CREATE INDEX IF NOT EXISTS idx_links_title ON links(title);
+    CREATE INDEX IF NOT EXISTS idx_links_url ON links(url);
   `);
 
   const count = db.prepare('SELECT COUNT(*) as count FROM folders').get() as { count: number };

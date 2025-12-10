@@ -4,12 +4,14 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ImportBookmarksDialog } from "@/components/dialogs/ImportBookmarksDialog";
+import { SearchDialog } from "@/components/dialogs/SearchDialog";
 import { useFolderStore } from "@/store/folderStore";
-import { Download, Upload } from "lucide-react";
+import { Download, Upload, Search } from "lucide-react";
 import { toast } from "sonner";
 
 export const Header = () => {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const { fetchTree } = useFolderStore();
 
@@ -48,6 +50,11 @@ export const Header = () => {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + K for Search
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchDialogOpen(true);
+      }
       // Ctrl/Cmd + I for Import
       if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
         e.preventDefault();
@@ -68,6 +75,19 @@ export const Header = () => {
     <>
       <header className="flex h-14 items-center justify-between border-b border-border bg-background px-4">
         <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setSearchDialogOpen(true)}
+            title="Search bookmarks (Ctrl/Cmd + K)"
+            data-testid="search-button"
+          >
+            <Search className="h-4 w-4 mr-2" />
+            Search
+            <kbd className="ml-2 hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+              <span className="text-xs">⌘</span>K
+            </kbd>
+          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -110,6 +130,11 @@ export const Header = () => {
           />
         </div>
       </header>
+
+      <SearchDialog
+        open={searchDialogOpen}
+        onOpenChange={setSearchDialogOpen}
+      />
 
       <ImportBookmarksDialog
         open={importDialogOpen}
