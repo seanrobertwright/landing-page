@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface ImportBookmarksDialogProps {
   open: boolean;
@@ -37,6 +38,7 @@ export const ImportBookmarksDialog = ({
   const [isImporting, setIsImporting] = useState(false);
   const [error, setError] = useState<string>("");
   const [stats, setStats] = useState<ImportStats | null>(null);
+  const [progress, setProgress] = useState<number>(0);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -56,6 +58,15 @@ export const ImportBookmarksDialog = ({
     setIsImporting(true);
     setError("");
     setStats(null);
+    setProgress(0);
+
+    // Simulate progress for user feedback
+    const progressInterval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 90) return prev;
+        return prev + 10;
+      });
+    }, 200);
 
     try {
       const formData = new FormData();
@@ -68,6 +79,8 @@ export const ImportBookmarksDialog = ({
       });
 
       const result = await response.json();
+      clearInterval(progressInterval);
+      setProgress(100);
 
       if (!response.ok || !result.success) {
         setError(result.error || "Failed to import bookmarks");
@@ -75,6 +88,9 @@ export const ImportBookmarksDialog = ({
       }
 
       setStats(result.stats);
+      toast.success(
+        `Import complete! Added ${result.stats.linksAdded} bookmarks and ${result.stats.foldersAdded} folders`
+      );
 
       // Call completion callback after a short delay to show stats
       if (onImportComplete) {
@@ -83,9 +99,13 @@ export const ImportBookmarksDialog = ({
         }, 2000);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to import bookmarks");
+      clearInterval(progressInterval);
+      const errorMessage = err instanceof Error ? err.message : "Failed to import bookmarks";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsImporting(false);
+      setProgress(0);
     }
   };
 
@@ -94,6 +114,7 @@ export const ImportBookmarksDialog = ({
     setError("");
     setStats(null);
     setStrategy("skip");
+    setProgress(0);
     onOpenChange(false);
   };
 
@@ -160,8 +181,15 @@ export const ImportBookmarksDialog = ({
           )}
 
           {isImporting && (
-            <div className="text-center py-4">
-              <p className="text-sm text-muted-foreground">Importing bookmarks...</p>
+            <div className="space-y-3 py-4">
+              <p className="text-sm text-muted-foreground text-center">Importing bookmarks...</p>
+              <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-primary h-full transition-all duration-300 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground text-center">{progress}%</p>
             </div>
           )}
 

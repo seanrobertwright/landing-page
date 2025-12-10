@@ -67,3 +67,51 @@ export function generateExportFilename(): string {
   const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
   return `bookmarks-${date}.json`;
 }
+
+/**
+ * Create a streaming export for large datasets
+ * Uses async generator to avoid loading everything into memory
+ */
+export async function* streamBookmarkExport(): AsyncGenerator<string> {
+  const folders = getAllFolders();
+  const links = getAllLinks();
+
+  // Stream header
+  yield '{\n';
+  yield `  "version": "1.0",\n`;
+  yield `  "exported_at": "${new Date().toISOString()}",\n`;
+  yield `  "folder_count": ${folders.length},\n`;
+  yield `  "link_count": ${links.length},\n`;
+  yield `  "folders": [\n`;
+
+  // Stream folders in chunks
+  for (let i = 0; i < folders.length; i++) {
+    const folder = folders[i];
+    const exportFolder = {
+      id: folder.id,
+      name: folder.name,
+      parent_id: folder.parent_id,
+      sort_order: folder.sort_order,
+    };
+    yield `    ${JSON.stringify(exportFolder)}${i < folders.length - 1 ? ',' : ''}\n`;
+  }
+
+  yield `  ],\n`;
+  yield `  "links": [\n`;
+
+  // Stream links in chunks
+  for (let i = 0; i < links.length; i++) {
+    const link = links[i];
+    const exportLink = {
+      id: link.id,
+      title: link.title,
+      url: link.url,
+      folder_id: link.folder_id,
+      sort_order: link.sort_order,
+    };
+    yield `    ${JSON.stringify(exportLink)}${i < links.length - 1 ? ',' : ''}\n`;
+  }
+
+  yield `  ]\n`;
+  yield '}\n';
+}

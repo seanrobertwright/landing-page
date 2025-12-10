@@ -132,9 +132,14 @@ function decodeHtmlEntities(text: string): string {
 }
 
 /**
- * Validate URL format
+ * Validate URL format and length
  */
 function isValidUrl(url: string): boolean {
+  // Reject URLs longer than 2048 characters (browser limit)
+  if (url.length > 2048) {
+    return false;
+  }
+
   try {
     const parsed = new URL(url);
     return parsed.protocol === 'http:' || parsed.protocol === 'https:';

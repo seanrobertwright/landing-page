@@ -45,6 +45,42 @@ describe('parseNetscapeBookmarks', () => {
     expect(work).toBeDefined();
   });
 
+  it('should parse Edge bookmark export', () => {
+    const html = readFileSync(
+      join(process.cwd(), 'tests/fixtures/bookmarks/edge-export.html'),
+      'utf-8'
+    );
+    const result = parseNetscapeBookmarks(html);
+
+    expect(result.folders.length).toBeGreaterThan(0);
+    expect(result.links.length).toBeGreaterThan(0);
+
+    // Check for Edge-specific content
+    const favoritesBar = result.folders.find(f => f.name === 'Favorites bar');
+    expect(favoritesBar).toBeDefined();
+
+    const microsoft = result.links.find(l => l.url === 'https://www.microsoft.com');
+    expect(microsoft).toBeDefined();
+  });
+
+  it('should parse Safari bookmark export', () => {
+    const html = readFileSync(
+      join(process.cwd(), 'tests/fixtures/bookmarks/safari-export.html'),
+      'utf-8'
+    );
+    const result = parseNetscapeBookmarks(html);
+
+    expect(result.folders.length).toBeGreaterThan(0);
+    expect(result.links.length).toBeGreaterThan(0);
+
+    // Check for Safari-specific content
+    const bookmarksBar = result.folders.find(f => f.name === 'BookmarksBar');
+    expect(bookmarksBar).toBeDefined();
+
+    const apple = result.links.find(l => l.url === 'https://www.apple.com/');
+    expect(apple).toBeDefined();
+  });
+
   it('should preserve folder hierarchy', () => {
     const html = readFileSync(
       join(process.cwd(), 'tests/fixtures/bookmarks/chrome-export.html'),
@@ -184,5 +220,32 @@ describe('parseNetscapeBookmarks', () => {
 
     // Link should be in the deepest folder
     expect(result.links[0].folderTempId).toBe(result.folders[2].tempId);
+  });
+
+  it('should reject URLs longer than 2048 characters', () => {
+    const longUrl = 'https://example.com/' + 'a'.repeat(2100);
+    const html = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<DL><p>
+    <DT><A HREF="${longUrl}">Long URL</A>
+    <DT><A HREF="https://valid.com">Valid URL</A>
+</DL><p>`;
+
+    const result = parseNetscapeBookmarks(html);
+
+    // Should only include the valid URL
+    expect(result.links.length).toBe(1);
+    expect(result.links[0].url).toBe('https://valid.com');
+  });
+
+  it('should handle large exports with 5000+ bookmarks', () => {
+    const html = readFileSync(
+      join(process.cwd(), 'tests/fixtures/bookmarks/large-export-5000.html'),
+      'utf-8'
+    );
+
+    const result = parseNetscapeBookmarks(html);
+
+    expect(result.folders.length).toBe(100);
+    expect(result.links.length).toBe(5000);
   });
 });
